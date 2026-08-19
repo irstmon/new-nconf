@@ -989,6 +989,8 @@ $fattr,$fval
                 # this routine makes sense both for collectors and monitors, since hosts/services can also be disabled (not monitored) on a monitor,
                 # and must therefore be removed from any items they might be linked to;
 
+                my $temp_hostname = "";
+
                 foreach my $attr (@item_links){
 
                     # in "collector" context, $id_item->[1] contains the collector's ID
@@ -1004,6 +1006,39 @@ $fattr,$fval
                             &logger(4,"Removing item '$attr->[3]' from $class '$id_item->[0]' because the item is not monitored");
                         }
                         undef $attr->[1];
+                    }
+
+                    # handle service escalations - if there is a service escalation defined that is not valid delete it
+                    if($class eq "service-escalation"){
+                        if($attr->[0] eq "host_name"){
+                            $temp_hostname = $attr->[3];
+                        }
+                        if($attr->[0] eq "service_description"){
+                            my @temporaer2 = &getItemsLinked($attr->[3]);
+                            foreach my $tempo (@temporaer2){
+                                if($tempo->[0] eq "host_name"){
+                                    if($tempo->[3] ne $temp_hostname){
+                                        &logger(4,"Service escalation for non-matching service '$attr->[3]' on host '$temp_hostname' - removing");
+                                        undef $attr->[1];
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    # handle advanced service escalations
+                    if($class eq "adv-service-escalation"){
+                        if($attr->[0] eq "service_description"){
+                            my @temporaer = &getItemData($attr->[3]);
+                            foreach my $tempo (@temporaer){
+                                if($tempo->[0] eq "service_description"){
+                                    &logger(4,"Replacing Advanced Service NConf internal service name");
+                                    &logger(4,"Before: '$attr->[1]' replace with '$tempo->[1]'");
+                                    $attr->[1] = $tempo->[1];
+                                    &logger(4,"After: '$attr->[1]'");
+                                }
+                            }
+                        }
                     }
                 }
 
