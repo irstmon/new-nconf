@@ -952,7 +952,21 @@ if(
                     createMovableOptions("fromBox_'.$entry["id_attr"].'","toBox_'.$entry["id_attr"].'",530,145,"available items","selected items","livesearch",'.$assign_cust_order.','.$replace_mode.');
                 </script>
                 ';
-                
+
+                # NConf custom: cross-filter Host <-> Advanced Service selection on
+                # "adv-service-escalation" items, so only host/service combinations
+                # that actually exist can be picked (see include/ajax/json/adv_escalation_valid_hosts.php).
+                # Advanced Service drives the filter; the Host box is narrowed down
+                # to hosts valid for the current set of selected services.
+                if ( $item_class == "adv-service-escalation" ){
+                    if ( $entry["attr_name"] == "host_name" ){
+                        $escalation_host_attr_id = $entry["id_attr"];
+                    }elseif ( $entry["attr_name"] == "service_description" AND isset($escalation_host_attr_id) ){
+                        echo '<script type="text/javascript">
+                            NConf_escalation_setupServiceHostFilter('.(int)$escalation_host_attr_id.', '.(int)$entry["id_attr"].');
+                        </script>';
+                    }
+                }
 
                 echo '</td>';
 

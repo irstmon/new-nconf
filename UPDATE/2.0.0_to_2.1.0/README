@@ -1,0 +1,45 @@
+####################################################
+##  Update information for NConf 2.0.0 to 2.1.0   ##
+####################################################
+
+##------------------------------------------------##
+##       Changes to the NConf configuration       ##
+##------------------------------------------------##
+
+None.
+
+##------------------------------------------------##
+##     Changes to the generated configuration     ##
+##------------------------------------------------##
+
+New optional classes: "service-escalation", "adv-service-escalation",
+"host-escalation" and "eventhandler". Existing installations that do not
+use these will see no change to their generated Nagios config.
+
+##------------------------------------------------##
+##              Additional changes                ##
+##------------------------------------------------##
+
+Adds four classes that are commonly hand-rolled by NConf users but were
+never part of the stock install: Service escalation, Advanced Service
+escalation, Host escalation and Event Handler.
+
+Also adds, in the surrounding code (not part of this SQL script):
+- Sidebar icons for all four classes
+- A cross-filter on the "Advanced Service escalation" edit form: selecting
+  one or more Advanced Services narrows the Host selection down to only
+  the hosts that actually have all of the selected services (directly
+  linked or inherited over a hostgroup), preventing invalid host/service
+  combinations from being saved
+- Export-time validation for "service-escalation" and fixed name resolution
+  for "adv-service-escalation" in bin/lib/NConf/ExportNagios.pm (a service
+  escalation referencing a non-matching host/service pair is now dropped
+  from the generated config instead of causing a Nagios config-check error)
+
+This update script (update_database_2.0.0_to_2.1.0.sql) is idempotent: it
+checks for each class/attribute by name before inserting, so it is safe to
+run even on installations that already created these classes by hand.
+
+####################################################
+##           End of update information            ##
+####################################################

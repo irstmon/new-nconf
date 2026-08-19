@@ -585,3 +585,104 @@ function eraseCookie(name) {
     createCookie(name,"",-1);
 }
 
+
+
+/* NConf custom: adv-service-escalation Host <-> Advanced Service cross-filter
+ *
+ * The "Advanced Service" box drives the filter: whenever the set of selected
+ * services changes, the "Host" box is narrowed down (via AJAX) to only the
+ * hosts that are valid for ALL currently selected services - directly linked
+ * or inherited over a hostgroup. This prevents picking a host/service
+ * combination that does not actually exist, which would otherwise only
+ * surface later as a Nagios config-check error.
+ *
+ * Hosts already selected that become invalid (e.g. after adding another
+ * service) are NOT removed automatically - they are flagged in red with a
+ * warning tooltip instead, so nothing gets silently deleted while editing.
+ */
+function NConf_escalation_setupServiceHostFilter(hostAttrId, serviceAttrId){
+    var serviceToBox = document.getElementById('toBox_' + serviceAttrId);
+    var hostFromBox  = document.getElementById('fromBox_' + hostAttrId);
+    var hostToBox    = document.getElementById('toBox_' + hostAttrId);
+
+    if (!serviceToBox || !hostFromBox || !hostToBox){
+        return;
+    }
+
+    var WARNING_SUFFIX = ' (!) not valid for current service selection';
+
+    function currentServiceIds(){
+        var ids = [];
+        for (var i = 0; i < serviceToBox.options.length; i++){
+            ids.push(serviceToBox.options[i].value);
+        }
+        return ids;
+    }
+
+    function applyValidHosts(data){
+        var restrict = !!data.restrict;
+        var validIds = {};
+        if (restrict){
+            for (var i = 0; i < data.valid_ids.length; i++){
+                validIds[data.valid_ids[i]] = true;
+            }
+        }
+
+        // available list: hide hosts that aren't valid for the current selection
+        for (var i = 0; i < hostFromBox.options.length; i++){
+            var opt = hostFromBox.options[i];
+            if (!restrict || validIds[opt.value]){
+                opt.style.display = '';
+                opt.disabled = false;
+            }else{
+                opt.style.display = 'none';
+                opt.disabled = true;
+            }
+        }
+
+        // already-selected list: flag (but never remove) hosts that are no longer valid
+        for (var i = 0; i < hostToBox.options.length; i++){
+            var opt = hostToBox.options[i];
+            var isInvalid = restrict && !validIds[opt.value];
+            if (isInvalid){
+                opt.style.color = '#c0392b';
+                if (opt.title.indexOf(WARNING_SUFFIX) === -1){
+                    opt.title = opt.title + WARNING_SUFFIX;
+                }
+            }else{
+                opt.style.color = '';
+                if (opt.title.indexOf(WARNING_SUFFIX) !== -1){
+                    opt.title = opt.title.replace(WARNING_SUFFIX, '');
+                }
+            }
+        }
+    }
+
+    function refresh(){
+        var ids = currentServiceIds();
+        if (ids.length === 0){
+            applyValidHosts({restrict: false, valid_ids: []});
+            return;
+        }
+        $.post(
+            'call_file.php?ajax_file=json/adv_escalation_valid_hosts.php',
+            {service_ids: ids.join(',')},
+            function(data){ applyValidHosts(data); },
+            'json'
+        );
+    }
+
+    // react whenever the selected-services box changes (double-click or move buttons
+    // both mutate its child <option> nodes, so a MutationObserver catches both)
+    if (window.MutationObserver){
+        var observer = new MutationObserver(function(){ refresh(); });
+        observer.observe(serviceToBox, {childList: true});
+    }else{
+        // fallback for very old browsers without MutationObserver support
+        setInterval(refresh, 1500);
+    }
+
+    // apply initial state right away (relevant when editing an existing escalation
+    // that already has services selected)
+    refresh();
+}
