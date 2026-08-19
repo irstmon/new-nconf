@@ -24,6 +24,14 @@ Adds four classes that are commonly hand-rolled by NConf users but were
 never part of the stock install: Service escalation, Advanced Service
 escalation, Host escalation and Event Handler.
 
+Note on "Service escalation": this class has no "host_name" field. A single
+entry can select services from any number of different hosts; at export
+time, the selected services are grouped by their actual host and one
+serviceescalation block is generated per host, all sharing this entry's
+notification/contact/timing settings. If your installation already created
+this class by hand with a "host_name" field, this update removes it
+(existing escalations keep working, host is now derived automatically).
+
 Also adds, in the surrounding code (not part of this SQL script):
 - Sidebar icons for all four classes
 - A cross-filter on the "Advanced Service escalation" edit form: selecting
@@ -31,10 +39,8 @@ Also adds, in the surrounding code (not part of this SQL script):
   the hosts that actually have all of the selected services (directly
   linked or inherited over a hostgroup), preventing invalid host/service
   combinations from being saved
-- Export-time validation for "service-escalation" and fixed name resolution
-  for "adv-service-escalation" in bin/lib/NConf/ExportNagios.pm (a service
-  escalation referencing a non-matching host/service pair is now dropped
-  from the generated config instead of causing a Nagios config-check error)
+- Export-time host grouping for "service-escalation" and fixed name
+  resolution for "adv-service-escalation" in bin/lib/NConf/ExportNagios.pm
 
 This update script (update_database_2.0.0_to_2.1.0.sql) is idempotent: it
 checks for each class/attribute by name before inserting, so it is safe to

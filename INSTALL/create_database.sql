@@ -285,7 +285,10 @@ SELECT
 FROM DUAL
 WHERE NOT EXISTS (SELECT 1 FROM ConfigClasses WHERE config_class = 'eventhandler');
 
-# 2. ConfigAttrs - service-escalation
+
+-- ----------------------------------------------------------------------------
+-- 2. ConfigAttrs - service-escalation
+-- ----------------------------------------------------------------------------
 
 INSERT INTO ConfigAttrs
     (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
@@ -350,23 +353,8 @@ WHERE NOT EXISTS (
 INSERT INTO ConfigAttrs
     (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
 SELECT
-    'host_name', 'host name', NULL, 'assign_one', 0,
-    NULL, NULL, 'yes', 5, 'yes',
-    'yes', 'no', 'no', 'no',
-    (SELECT id_class FROM ConfigClasses WHERE config_class = 'host'),
-    (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
-FROM DUAL
-WHERE NOT EXISTS (
-    SELECT 1 FROM ConfigAttrs
-    WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
-    AND attr_name = 'host_name'
-);
-
-INSERT INTO ConfigAttrs
-    (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
-SELECT
     'service_description', 'service description', NULL, 'assign_many', 0,
-    NULL, NULL, 'yes', 6, 'yes',
+    NULL, NULL, 'yes', 5, 'yes',
     'yes', 'no', 'no', 'no',
     (SELECT id_class FROM ConfigClasses WHERE config_class = 'service'),
     (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
@@ -381,7 +369,7 @@ INSERT INTO ConfigAttrs
     (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
 SELECT
     'contact_groups', 'contact groups', NULL, 'assign_many', 0,
-    NULL, NULL, 'yes', 7, 'yes',
+    NULL, NULL, 'yes', 6, 'yes',
     'yes', 'no', 'no', 'no',
     (SELECT id_class FROM ConfigClasses WHERE config_class = 'contactgroup'),
     (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
@@ -396,7 +384,7 @@ INSERT INTO ConfigAttrs
     (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
 SELECT
     'escalation_period', 'escalation period', NULL, 'assign_one', 0,
-    NULL, NULL, 'no', 8, 'yes',
+    NULL, NULL, 'no', 7, 'yes',
     'yes', 'no', 'no', 'no',
     (SELECT id_class FROM ConfigClasses WHERE config_class = 'timeperiod'),
     (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
@@ -407,7 +395,35 @@ WHERE NOT EXISTS (
     AND attr_name = 'escalation_period'
 );
 
-# 3. ConfigAttrs - adv-service-escalation
+-- Cleanup for installations that already have a "host_name" field on
+-- service-escalation (e.g. from an earlier hand-rolled setup, or a
+-- pre-release version of this migration): a single escalation entry can
+-- cover services on several hosts, so host_name is no longer a field on
+-- this class - it is derived per host at export time instead. Removing the
+-- attribute also removes any stored value for it (ON DELETE CASCADE).
+-- The ordering shift only applies if "host_name" actually existed (captured
+-- into a session variable before deleting it) - on a fresh install (no
+-- host_name to begin with) this is a no-op.
+SET @service_escalation_had_host_name = (
+    SELECT COUNT(*) FROM ConfigAttrs
+    WHERE attr_name = 'host_name'
+    AND fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
+);
+
+DELETE FROM ConfigAttrs
+WHERE attr_name = 'host_name'
+AND fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation');
+
+UPDATE ConfigAttrs
+SET ordering = ordering - 1
+WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
+AND ordering > 4
+AND @service_escalation_had_host_name > 0;
+
+
+-- ----------------------------------------------------------------------------
+-- 3. ConfigAttrs - adv-service-escalation
+-- ----------------------------------------------------------------------------
 
 INSERT INTO ConfigAttrs
     (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
@@ -529,7 +545,10 @@ WHERE NOT EXISTS (
     AND attr_name = 'escalation_period'
 );
 
-# 4. ConfigAttrs - host-escalation
+
+-- ----------------------------------------------------------------------------
+-- 4. ConfigAttrs - host-escalation
+-- ----------------------------------------------------------------------------
 
 INSERT INTO ConfigAttrs
     (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
@@ -591,8 +610,8 @@ WHERE NOT EXISTS (
     AND attr_name = 'notification_interval'
 );
 
-# NOTE: ordering jumps from 4 to 6 here (no ordering=5 attribute) - this
-# matches the source installation exactly, it's not a mistake.
+-- NOTE: ordering jumps from 4 to 6 here (no ordering=5 attribute) - this
+-- matches the source installation exactly, it's not a mistake.
 INSERT INTO ConfigAttrs
     (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
 SELECT
@@ -638,7 +657,10 @@ WHERE NOT EXISTS (
     AND attr_name = 'escalation_period'
 );
 
-# 5. ConfigAttrs - eventhandler
+
+-- ----------------------------------------------------------------------------
+-- 5. ConfigAttrs - eventhandler
+-- ----------------------------------------------------------------------------
 
 INSERT INTO ConfigAttrs
     (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
