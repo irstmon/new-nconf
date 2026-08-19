@@ -781,6 +781,8 @@ if( ( isset($class) ) AND ($class != "") ){
 
         if ($class == "host") {
             echo '<td colspan="4" class="center">'.FRIENDLY_NAME_ACTIONS.'</td>';
+        }elseif( !isset($_GET["xmode"]) AND in_array($class, array("service-escalation", "adv-service-escalation", "host-escalation", "eventhandler")) ){
+            echo '<td colspan="3" class="center">'.FRIENDLY_NAME_ACTIONS.'</td>';
         }elseif(!isset($_GET["xmode"])){
             echo '<td colspan="2" class="center">'.FRIENDLY_NAME_ACTIONS.'</td>';
         }else{
@@ -918,6 +920,11 @@ if( ( isset($class) ) AND ($class != "") ){
                 }else{
                     echo '<td style="text-align:center"><a href="handle_item.php?item='.$class.'&amp;id='.$entry["id_item"].'">'.ICON_EDIT.'</a></td>';
                     echo '<td style="text-align:center"><a href="delete_item.php?item='.$class.'&amp;ids='.$entry["id_item"].'">'.ICON_DELETE.'</a></td>';
+
+                    // clone button (currently only for service/adv-service/host escalation and eventhandler)
+                    if ( in_array($class, array("service-escalation", "adv-service-escalation", "host-escalation", "eventhandler")) ){
+                        echo '<td style="text-align:center"><a href="clone_item.php?class='.$class.'&amp;id='.$entry["id_item"].'">'.ICON_CLONE.'</a></td>';
+                    }
                 }
 
                 if ( !isset($_GET["xmode"]) ){
