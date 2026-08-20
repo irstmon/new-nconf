@@ -768,4 +768,89 @@ WHERE NOT EXISTS (
 -- ============================================================================
 
 
+--
+-- advanced-service host_exclude / hostgroup_exclude attributes
+--
+
+INSERT INTO ConfigAttrs
+    (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
+SELECT
+    'host_exclude', 'exclude advanced-service from host', NULL, 'assign_many', 0,
+    NULL, NULL, 'no', 26, 'yes',
+    'no', 'no', 'no', 'no',
+    (SELECT id_class FROM ConfigClasses WHERE config_class = 'host'),
+    (SELECT id_class FROM ConfigClasses WHERE config_class = 'advanced-service')
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM ConfigAttrs
+    WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'advanced-service')
+    AND attr_name = 'host_exclude'
+);
+
+INSERT INTO ConfigAttrs
+    (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
+SELECT
+    'hostgroup_exclude', 'exclude advanced-service from hostgroup', NULL, 'assign_many', 0,
+    NULL, NULL, 'no', 27, 'yes',
+    'no', 'no', 'no', 'no',
+    (SELECT id_class FROM ConfigClasses WHERE config_class = 'hostgroup'),
+    (SELECT id_class FROM ConfigClasses WHERE config_class = 'advanced-service')
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM ConfigAttrs
+    WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'advanced-service')
+    AND attr_name = 'hostgroup_exclude'
+);
+
+
+--
+-- event_handler attribute on host, service and advanced-service
+--
+
+INSERT INTO ConfigAttrs
+    (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
+SELECT
+    'event_handler', 'Event Handler', NULL, 'assign_one', 0,
+    NULL, NULL, 'no', 29, 'yes',
+    'yes', 'no', 'no', 'no',
+    (SELECT id_class FROM ConfigClasses WHERE config_class = 'eventhandler'),
+    (SELECT id_class FROM ConfigClasses WHERE config_class = 'host')
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM ConfigAttrs
+    WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'host')
+    AND attr_name = 'event_handler'
+);
+
+INSERT INTO ConfigAttrs
+    (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
+SELECT
+    'event_handler', 'Event Handler', NULL, 'assign_one', 0,
+    NULL, NULL, 'no', 25, 'yes',
+    'yes', 'no', 'no', 'no',
+    (SELECT id_class FROM ConfigClasses WHERE config_class = 'eventhandler'),
+    (SELECT id_class FROM ConfigClasses WHERE config_class = 'service')
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM ConfigAttrs
+    WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service')
+    AND attr_name = 'event_handler'
+);
+
+INSERT INTO ConfigAttrs
+    (attr_name, friendly_name, description, datatype, max_length, poss_values, predef_value, mandatory, ordering, visible, write_to_conf, naming_attr, link_as_child, link_bidirectional, fk_show_class_items, fk_id_class)
+SELECT
+    'event_handler', 'Event Handler', NULL, 'assign_one', 0,
+    NULL, NULL, 'no', 28, 'yes',
+    'yes', 'no', 'no', 'no',
+    (SELECT id_class FROM ConfigClasses WHERE config_class = 'eventhandler'),
+    (SELECT id_class FROM ConfigClasses WHERE config_class = 'advanced-service')
+FROM DUAL
+WHERE NOT EXISTS (
+    SELECT 1 FROM ConfigAttrs
+    WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'advanced-service')
+    AND attr_name = 'event_handler'
+);
+
+
 -- Dump completed on 2022-12-13 15:44:36
