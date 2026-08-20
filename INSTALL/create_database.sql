@@ -221,6 +221,44 @@ UNLOCK TABLES;
 -- Host escalation, Event Handler (not part of stock NConf)
 --
 
+-- ----------------------------------------------------------------------------
+-- 0. Cleanup: remove "host_name" from service-escalation if present
+-- ----------------------------------------------------------------------------
+-- Placed FIRST and standalone on purpose: if any statement further down in
+-- this file fails (e.g. because of some other pre-existing local deviation
+-- in a hand-modified installation), the update runner aborts the rest of
+-- the file - this cleanup is important enough that it should not depend on
+-- anything else here succeeding first.
+--
+-- service-escalation may already have a "host_name" field from an earlier
+-- hand-rolled setup, or a pre-release version of this migration: a single
+-- escalation entry can cover services on several hosts, so host_name is no
+-- longer a field on this class - it is derived per host at export time
+-- instead. Removing the attribute also removes any stored value for it
+-- (ON DELETE CASCADE). The ordering shift only applies if "host_name"
+-- actually existed (captured into a session variable before deleting it) -
+-- on a fresh install (no host_name, and no service-escalation class at all
+-- yet) this is a harmless no-op.
+SET @service_escalation_had_host_name = (
+    SELECT COUNT(*) FROM ConfigAttrs
+    WHERE attr_name = 'host_name'
+    AND fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
+);
+
+DELETE FROM ConfigAttrs
+WHERE attr_name = 'host_name'
+AND fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation');
+
+UPDATE ConfigAttrs
+SET ordering = ordering - 1
+WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
+AND ordering > 4
+AND @service_escalation_had_host_name > 0;
+
+-- ----------------------------------------------------------------------------
+-- 1. ConfigClasses
+-- ----------------------------------------------------------------------------
+
 INSERT INTO ConfigClasses
     (config_class, friendly_name, nav_visible, ordering, `grouping`, nav_links, nav_privs, class_type, out_file, nagios_object)
 SELECT
@@ -284,7 +322,6 @@ SELECT
     'command' AS nagios_object
 FROM DUAL
 WHERE NOT EXISTS (SELECT 1 FROM ConfigClasses WHERE config_class = 'eventhandler');
-
 
 -- ----------------------------------------------------------------------------
 -- 2. ConfigAttrs - service-escalation
@@ -394,32 +431,6 @@ WHERE NOT EXISTS (
     WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
     AND attr_name = 'escalation_period'
 );
-
--- Cleanup for installations that already have a "host_name" field on
--- service-escalation (e.g. from an earlier hand-rolled setup, or a
--- pre-release version of this migration): a single escalation entry can
--- cover services on several hosts, so host_name is no longer a field on
--- this class - it is derived per host at export time instead. Removing the
--- attribute also removes any stored value for it (ON DELETE CASCADE).
--- The ordering shift only applies if "host_name" actually existed (captured
--- into a session variable before deleting it) - on a fresh install (no
--- host_name to begin with) this is a no-op.
-SET @service_escalation_had_host_name = (
-    SELECT COUNT(*) FROM ConfigAttrs
-    WHERE attr_name = 'host_name'
-    AND fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
-);
-
-DELETE FROM ConfigAttrs
-WHERE attr_name = 'host_name'
-AND fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation');
-
-UPDATE ConfigAttrs
-SET ordering = ordering - 1
-WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'service-escalation')
-AND ordering > 4
-AND @service_escalation_had_host_name > 0;
-
 
 -- ----------------------------------------------------------------------------
 -- 3. ConfigAttrs - adv-service-escalation
@@ -545,7 +556,6 @@ WHERE NOT EXISTS (
     AND attr_name = 'escalation_period'
 );
 
-
 -- ----------------------------------------------------------------------------
 -- 4. ConfigAttrs - host-escalation
 -- ----------------------------------------------------------------------------
@@ -657,7 +667,6 @@ WHERE NOT EXISTS (
     AND attr_name = 'escalation_period'
 );
 
-
 -- ----------------------------------------------------------------------------
 -- 5. ConfigAttrs - eventhandler
 -- ----------------------------------------------------------------------------
@@ -751,6 +760,12 @@ WHERE NOT EXISTS (
     WHERE fk_id_class = (SELECT id_class FROM ConfigClasses WHERE config_class = 'eventhandler')
     AND attr_name = 'command_param_count'
 );
+
+-- ============================================================================
+-- Done. Verify with:
+--   SELECT config_class, friendly_name FROM ConfigClasses
+--   WHERE config_class IN ('service-escalation','adv-service-escalation','host-escalation','eventhandler');
+-- ============================================================================
 
 
 -- Dump completed on 2022-12-13 15:44:36

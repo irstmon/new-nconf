@@ -1,0 +1,34 @@
+####################################################
+##  Update information for NConf 1.3.1 to 2.0.0   ##
+####################################################
+
+##------------------------------------------------##
+##       Changes to the NConf configuration       ##
+##------------------------------------------------##
+
+None.
+
+##------------------------------------------------##
+##     Changes to the generated configuration     ##
+##------------------------------------------------##
+
+None.
+
+##------------------------------------------------##
+##              Additional changes                ##
+##------------------------------------------------##
+
+Bridging entry only. This fork's version number jumped from 1.3.1 directly
+to 2.0.0 without ever shipping an UPDATE/1.3.1_to_2.0.0 folder, which left
+installations below 2.0.0 with no way to reach any later update (including
+2.0.0_to_2.1.0) - the update chain matches installed_version against update
+folder names and stops the moment no folder picks up where the previous one
+left off.
+
+This folder intentionally contains no SQL and no version_check.php, mirroring
+the existing 1.3.0_to_1.3.1 folder's pattern for a version-only step with no
+actual database change.
+
+####################################################
+##           End of update information            ##
+####################################################
