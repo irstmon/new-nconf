@@ -144,6 +144,9 @@ if ( (defined('CMDB_SERVERLIST_COMPARE') AND CMDB_SERVERLIST_COMPARE == 1) AND (
 <script type="text/javascript">
     $(document).ready(function(){
 
+        // keep the search-filter fields the same width as the results table below
+        NConf_alignSearchFilterWidth();
+
         // Clone
         $('#submit_clone').click(function() {
             var first_id = $('input:checked:first').val();
@@ -241,7 +244,7 @@ echo NConf_HTML::page_title($class, '');
     echo $add_link;
 
 echo '<div class="search">';  
-echo '<table border=0 frame=box rules=none style="border-width: 0px">';
+echo '<table id="overview_search_table" border=0 frame=box rules=none style="border-width: 0px">';
 
 
 // Class Filter
@@ -281,12 +284,12 @@ echo '</tr>';
 
 echo '<tr>';
 
-    echo '<td><input style="width:150px" type="text" name="filter2" value="'.$filter2.'"></td>';
+    echo '<td><input id="searchfilter_input" type="text" name="filter2" value="'.$filter2.'"></td>';
 
     if ( isset($show_os_select) ){
         // OS filter
         echo '<td>';
-        echo '<select name="os" style="width:200px">';
+        echo '<select id="searchfilter_os_select" name="os">';
         echo '<option value="">'.SELECT_EMPTY_FIELD.'</option>';
 
         $query = 'SELECT fk_id_item,attr_value
@@ -681,7 +684,7 @@ if( ( isset($class) ) AND ($class != "") ){
 
 
     if ($class == "host"){
-        echo '<table class="ui-nconf-table ui-nconf-max-width ui-widget ui-widget-content">';
+        echo '<table id="overview_results_table" class="ui-nconf-table ui-nconf-max-width ui-widget ui-widget-content">';
         echo '<colgroup>
                 <col width="30">
                 <col>
@@ -696,7 +699,7 @@ if( ( isset($class) ) AND ($class != "") ){
     }else{
         $table_width = 450;
         if ($class == "service") $table_width = 500;
-        echo '<table class="ui-nconf-table ui-widget ui-widget-content" style="min-width:400px" width="'.$table_width.'">';
+        echo '<table id="overview_results_table" class="ui-nconf-table ui-widget ui-widget-content" style="min-width:400px" width="'.$table_width.'">';
 
         echo '<colgroup>';
             echo '<col>';
