@@ -700,6 +700,25 @@ function NConf_alignSearchFilterWidth() {
         return;
     }
 
+    // The "advanced actions" icon bar (multimodify/multidelete) is
+    // absolutely positioned at the right edge of the page, independent of
+    // the search table's own width - so on a wide results table, search
+    // fields sized purely off the table width could grow wide enough to
+    // run into it. Cap the available width at the icon bar's actual left
+    // edge (if present on this page) so the search row never reaches it.
+    var $searchTable = $('#overview_search_table');
+    var $iconBar = $('#ui-nconf-icon-bar');
+    if ($searchTable.length && $iconBar.length && $iconBar.is(':visible')) {
+        var searchTableLeft = $searchTable.offset().left;
+        var iconBarLeft = $iconBar.offset().left;
+        var SAFETY_MARGIN = 20;
+        var buttonsWidth = $('#buttons').outerWidth() || 0;
+        var availableWidth = iconBarLeft - searchTableLeft - buttonsWidth - SAFETY_MARGIN;
+        if (availableWidth > 0 && availableWidth < totalWidth) {
+            totalWidth = availableWidth;
+        }
+    }
+
     // keep it usable at either extreme - a two-column escalation list
     // shouldn't squeeze the input to nothing, and a very wide host table
     // shouldn't stretch it absurdly far either
