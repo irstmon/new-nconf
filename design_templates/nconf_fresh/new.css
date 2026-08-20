@@ -1,4 +1,10 @@
-body, html, textarea, table, button, input, select {
+body,
+html,
+textarea,
+table,
+button,
+input,
+select {
   font-family: Arial, sans-serif;
   font-size: 12px;
   font-style: normal;
@@ -47,7 +53,8 @@ body {
   font-weight: bold;
 }
 
-#titlesub table, #titlesub a {
+#titlesub table,
+#titlesub a {
   color: white;
   font-weight: bold;
   text-indent: 0;
@@ -84,6 +91,7 @@ body {
   text-align: left;
   width: 200px;
 }
+
 #navigation a {
   font-weight: bold;
 }
@@ -95,13 +103,16 @@ body {
   width: 520px;
 }
 
-input[type="radio"], input[type="checkbox"] {
+input[type="radio"],
+input[type="checkbox"] {
   border: 0;
   padding: 0;
   margin: 0;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   border: 1px solid #CCCCCC;
 }
 
@@ -167,7 +178,8 @@ a {
 /*
 #maincontent h2{
 */
-.content_header, #maincontent > h2 {
+.content_header,
+#maincontent>h2 {
   margin-bottom: 5px;
   margin-top: 0;
   font-size: 20px;
@@ -283,7 +295,8 @@ pre {
 
 }
 
-.table_content td, .align_top {
+.table_content td,
+.align_top {
   vertical-align: top;
 }
 
@@ -351,8 +364,7 @@ fieldset {
   margin-bottom: 10px;
 }
 
-.desc {
-}
+.desc {}
 
 .pointer {
   cursor: pointer;
@@ -380,7 +392,8 @@ thead th {
   padding: 0 0 0 22px;
 }
 
-.accordion_content table tr td:first-child, .accordion_content table thead th:first-child {
+.accordion_content table tr td:first-child,
+.accordion_content table thead th:first-child {
   padding-left: 2px;
 }
 
@@ -393,14 +406,16 @@ thead th {
  * same as jquery style definition ".ui-state-disabled"
  * this is needed because the browsers one will not work with our overrides on the jquery UI styles
  */
-input[disabled], select[disabled], textarea[disabled] {
+input[disabled],
+select[disabled],
+textarea[disabled] {
   opacity: .35;
-  filter: Alpha(Opacity = 35);
+  filter: Alpha(Opacity=35);
   background-image: none;
 }
 
 /* new page title element */
-.title > img {
+.title>img {
   margin-right: 10px;
 }
 
@@ -435,4 +450,79 @@ input[disabled], select[disabled], textarea[disabled] {
 /* ADVANCED SERVICES HOST OVERVIEW */
 #advanced-service-direct {
   padding-top: 30px;
+}
+
+/* CONSISTENT FIELD WIDTH ON ADD/MODIFY FORMS (handle_item.php)
+   Without this, a single very long <option> value (e.g. a saved "action url"
+   preset) stretches its whole table column, since HTML tables auto-size a
+   column to its widest cell - which then makes every field on the page a
+   different, oversized width instead of a clean uniform layout.
+   Capping the closed control's width and truncating overflow keeps every
+   field the same size; the full text is still shown when a dropdown is
+   actually open (browsers size the open dropdown popup independently of the
+   closed control's width/overflow). */
+/* the assign_many dual-listbox widget's own "type to filter" search field
+   (createMovableOptions in nconf.js) already has its own working width via
+   main.css's .livesearch_input rule - excluded here so our !important
+   doesn't override it. Instead, pin it to exactly 100% of its container
+   with the same box-sizing as the list box below it (which is also set to
+   100% via JS), so both compute to the exact same pixel width. */
+form[name="handle_item"] input[type="text"]:not(.livesearch_input),
+form[name="handle_item"] input[type="password"],
+form[name="handle_item"] select:not([multiple]) {
+  box-sizing: border-box !important;
+  width: 330px !important;
+  min-width: 330px !important;
+  max-width: 330px !important;
+}
+
+form[name="handle_item"] input.livesearch_input {
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+form[name="handle_item"] select:not([multiple]) {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* command-parameter argument fields (ARG1, ARG2, ...) stay compact instead of
+   inheriting the wide default above - they sit several to a row */
+form[name="handle_item"] .ui-nconf-max-width input[type="text"] {
+  width: 150px !important;
+  max-width: 150px !important;
+}
+
+/* The plugin in nconf_searchable_select.js replaces every closed <select>
+   with a custom "type-to-filter" widget (.nsel-wrap / .nsel-control) and
+   hides the real <select> - so the rules above, which target select
+   elements directly, never reach the thing that's actually visible. The
+   widget also measures the (now-hidden) select's own width and copies it
+   onto the visible control as an inline min-width, but never sets a
+   max-width, so long option text still stretches it open exactly like the
+   native select did. */
+form[name="handle_item"] .nsel-wrap {
+  max-width: 330px !important;
+}
+
+form[name="handle_item"] .nsel-control {
+  width: 330px !important;
+  min-width: 330px !important;
+  max-width: 330px !important;
+  box-sizing: border-box !important;
+}
+
+/* The open dropdown panel must still show the full option text (only the
+   closed control truncates) - let long options wrap onto multiple lines
+   instead of being cut off with an ellipsis, and give the panel more room
+   to work with than the closed control's 330px. */
+form[name="handle_item"] .nsel-panel {
+  max-width: 600px !important;
+}
+
+form[name="handle_item"] .nsel-opt {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
 }

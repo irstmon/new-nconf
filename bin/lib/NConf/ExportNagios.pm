@@ -979,6 +979,7 @@ $fattr,$fval
             ##### (1) fetch all linked items (assign_one, assign_many etc.)
             my @item_links = &getItemsLinked($id_item->[0]);
             my $has_empty_linking_attrs = 0;
+            my %escalation_by_host; # service-escalation only: host_name => [ service_description, ... ]
 
             ##### (1A) collector/monitor-specific processing for linked items (assign_* attrs)
             if(defined($id_item->[1]) || ($monitor_path && $path =~ /\Q$monitor_path\E/)){
@@ -988,6 +989,7 @@ $fattr,$fval
 
                 # this routine makes sense both for collectors and monitors, since hosts/services can also be disabled (not monitored) on a monitor,
                 # and must therefore be removed from any items they might be linked to;
+
 
                 foreach my $attr (@item_links){
 
@@ -1004,6 +1006,37 @@ $fattr,$fval
                             &logger(4,"Removing item '$attr->[3]' from $class '$id_item->[0]' because the item is not monitored");
                         }
                         undef $attr->[1];
+                    }
+
+                    # service-escalation no longer has its own "host_name" field (a single
+                    # escalation entry can cover services from several hosts); instead,
+                    # resolve each individually linked service's own host here, so the
+                    # export can group them and write one serviceescalation block per host
+                    # (see below, after item_links processing).
+                    if($class eq "service-escalation"){
+                        if($attr->[0] eq "service_description" && $attr->[3]){
+                            my @srv_data = &getItemsLinked($attr->[3]);
+                            foreach my $tempo (@srv_data){
+                                if($tempo->[0] eq "host_name" && $tempo->[1] ne ""){
+                                    push(@{$escalation_by_host{$tempo->[1]}}, $attr->[1]);
+                                }
+                            }
+                        }
+                    }
+
+                    # handle advanced service escalations
+                    if($class eq "adv-service-escalation"){
+                        if($attr->[0] eq "service_description"){
+                            my @temporaer = &getItemData($attr->[3]);
+                            foreach my $tempo (@temporaer){
+                                if($tempo->[0] eq "service_description"){
+                                    &logger(4,"Replacing Advanced Service NConf internal service name");
+                                    &logger(4,"Before: '$attr->[1]' replace with '$tempo->[1]'");
+                                    $attr->[1] = $tempo->[1];
+                                    &logger(4,"After: '$attr->[1]'");
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -1136,6 +1169,46 @@ $fattr,$fval
 
             ##### (1C) skip writing items to config, which are linked to objects that don't exist on the current collector (as evaluated above)
             if($has_empty_linking_attrs == 1){next}
+
+            ##### special processing for service-escalation: one NConf entry can cover
+            ##### services on several hosts, but each generated serviceescalation block
+            ##### must be scoped to a single host - write one block per host found among
+            ##### the selected services (%escalation_by_host was built above), instead of
+            ##### the generic single-block path used by every other class.
+            if($class eq "service-escalation"){
+
+                unless(%escalation_by_host){
+                    &logger(4,"Removing service-escalation '$id_item->[0]' from config because no valid service was selected");
+                    next;
+                }
+
+                foreach my $host_name (sort keys %escalation_by_host){
+
+                    print FILE "define $item {\n";
+
+                    my @item_attrs = &getItemData($id_item->[0]);
+                    foreach my $attr (@item_attrs){
+                        if($attr->[0] ne "" && $attr->[1] ne "" && $attr->[2] ne "no"){ $fattr=$attr->[0];$fval=$attr->[1];write FILE}
+                    }
+
+                    foreach my $attr (@item_links){
+                        next if($attr->[0] eq "service_description");
+                        if($attr->[0] ne "" && $attr->[1] ne "" && $attr->[2] ne "no"){ $fattr=$attr->[0];$fval=$attr->[1];write FILE}
+                    }
+
+                    $fattr = "host_name";
+                    $fval  = $host_name;
+                    write FILE;
+
+                    $fattr = "service_description";
+                    $fval  = join(",", @{$escalation_by_host{$host_name}});
+                    write FILE;
+
+                    print FILE "}\n\n";
+                }
+
+                next;
+            }
 
             print FILE "define $item {\n";
 
