@@ -585,3 +585,43 @@ function eraseCookie(name) {
     createCookie(name,"",-1);
 }
 
+
+
+/* NConf custom: keep the overview search-filter fields visually the same
+ * width as the results table beneath them (not a fixed size - it adapts to
+ * whatever the actual table renders at, which varies a lot by class: a
+ * "hosts" table with many columns vs. a plain 2-column escalation list).
+ * Mirrors the same "measure and sync" approach already used for the
+ * livesearch box in the assign_many widget (createMovableOptions above).
+ */
+function NConf_alignSearchFilterWidth(){
+    var $results = $('#overview_results_table');
+    var $searchInput = $('#searchfilter_input');
+    if (!$results.length || !$searchInput.length){
+        return;
+    }
+
+    var totalWidth = $results.outerWidth();
+    if (!totalWidth){
+        return;
+    }
+
+    // keep it usable at either extreme - a two-column escalation list
+    // shouldn't squeeze the input to nothing, and a very wide host table
+    // shouldn't stretch it absurdly far either
+    var MIN_WIDTH = 150;
+    var MAX_WIDTH = 500;
+
+    var $osSelect = $('#searchfilter_os_select');
+    if ($osSelect.length){
+        // split the available width between the two fields, same rough
+        // proportion the old fixed 150px/200px values had
+        var inputWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, Math.round(totalWidth * 0.43)));
+        var selectWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, Math.round(totalWidth * 0.55)));
+        $searchInput.css('width', inputWidth + 'px');
+        $osSelect.css('width', selectWidth + 'px');
+    }else{
+        var width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, totalWidth - 20));
+        $searchInput.css('width', width + 'px');
+    }
+}
