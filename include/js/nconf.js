@@ -1,30 +1,30 @@
-function swap_visible (ID) {
-        if (document.getElementById(ID).style.display == "none"){
-                document.getElementById(ID).style.display = "";
-                document.getElementById("swap_icon_" + ID).src = "img/icon_collapse.gif";
-        }else{
-                document.getElementById(ID).style.display = "none";
-                document.getElementById("swap_icon_" + ID).src = "img/icon_expand.gif";
-        }
+function swap_visible(ID) {
+    if (document.getElementById(ID).style.display == "none") {
+        document.getElementById(ID).style.display = "";
+        document.getElementById("swap_icon_" + ID).src = "img/icon_collapse.gif";
+    } else {
+        document.getElementById(ID).style.display = "none";
+        document.getElementById("swap_icon_" + ID).src = "img/icon_expand.gif";
+    }
 }
 
-function swap_tree (ID, OPEN_IMG, CLOSE_IMG) {
-        if (document.getElementById(ID).style.display == "none"){
-                document.getElementById(ID).style.display = "";
-                document.getElementById("swap_icon_" + ID).src = CLOSE_IMG;
-        }else{
-                document.getElementById(ID).style.display = "none";
-                document.getElementById("swap_icon_" + ID).src = OPEN_IMG;
-        }
+function swap_tree(ID, OPEN_IMG, CLOSE_IMG) {
+    if (document.getElementById(ID).style.display == "none") {
+        document.getElementById(ID).style.display = "";
+        document.getElementById("swap_icon_" + ID).src = CLOSE_IMG;
+    } else {
+        document.getElementById(ID).style.display = "none";
+        document.getElementById("swap_icon_" + ID).src = OPEN_IMG;
+    }
 }
 
-function swap_advanced (ID) {
+function swap_advanced(ID) {
     var items = document.getElementsByName(ID);
-    for (var i=0; i<items.length; i++) {
-        if (document.getElementsByName(ID)[i].style.display == "none"){
-                document.getElementsByName(ID)[i].style.display = "";
-        }else{
-                document.getElementsByName(ID)[i].style.display = "none";
+    for (var i = 0; i < items.length; i++) {
+        if (document.getElementsByName(ID)[i].style.display == "none") {
+            document.getElementsByName(ID)[i].style.display = "";
+        } else {
+            document.getElementsByName(ID)[i].style.display = "none";
         }
     }
 }
@@ -33,29 +33,29 @@ function swap_advanced (ID) {
 
 
 
-function swap_checkboxes (ID) {
+function swap_checkboxes(ID) {
     var Inputs = document.getElementsByTagName("input");
-    for (var i=0; i<Inputs.length; i++) {
-        if(Inputs[i].type == 'checkbox'){
-            if(Inputs[i].checked == false){
+    for (var i = 0; i < Inputs.length; i++) {
+        if (Inputs[i].type == 'checkbox') {
+            if (Inputs[i].checked == false) {
                 Inputs[i].checked = true
-            }else{
+            } else {
                 Inputs[i].checked = false
             }
         }
     }
 }
 
-function submitform (FORMNAME, VALUE){
+function submitform(FORMNAME, VALUE) {
     var FormObj = document.forms[FORMNAME];
     FormObj.action = FormObj.action + "&goto=" + VALUE;
     FormObj.submit();
 }
 
 
-function disable (ID) {
+function disable(ID) {
     var items = document.getElementsByName(ID);
-    for (var i=0; i<items.length; i++) {
+    for (var i = 0; i < items.length; i++) {
         document.getElementsByName(ID)[i].disabled = true;
     }
 }
@@ -99,7 +99,7 @@ The script is nearly totaly rewritten, so i do not go into detail of the copyrig
 
 ************************************************************************************************************/
 
-    
+
 var fromBoxArray = new Array();
 var toBoxArray = new Array();
 var selectBoxIndex = 0;
@@ -109,133 +109,131 @@ var livesearchBASE = new Array();
 var livesearchfromBox_object = new Array();
 var livesearchBASE_object = new Array();
 
-function moveElementsUpDown(BoxIndex,move)
-{
+function moveElementsUpDown(BoxIndex, move) {
     tmpToBox = toBoxArray[BoxIndex];
     var tmp_move;
-    if (move == "up"){
-        for(var no=1;no<(tmpToBox.options.length);no++){
-            var destination_no = no-1;
-            if(tmpToBox.options[no].selected && !tmpToBox.options[destination_no].selected){
+    if (move == "up") {
+        for (var no = 1; no < (tmpToBox.options.length); no++) {
+            var destination_no = no - 1;
+            if (tmpToBox.options[no].selected && !tmpToBox.options[destination_no].selected) {
                 tmpToBox.options[no].selected = false;
                 // save upper entry
                 tmp_move = tmpToBox.options[destination_no];
                 // move selected entry one up and select it again
-                tmpToBox.options[destination_no] = new Option(tmpToBox.options[no].text,tmpToBox.options[no].value);
+                tmpToBox.options[destination_no] = new Option(tmpToBox.options[no].text, tmpToBox.options[no].value);
                 tmpToBox.options[destination_no].selected = true;
                 // move upper entry one down
-                tmpToBox.options[no] = new Option(tmp_move.text,tmp_move.value);
-            }           
+                tmpToBox.options[no] = new Option(tmp_move.text, tmp_move.value);
+            }
         }
-    }else if(move == "down"){
-        for(var no=(tmpToBox.options.length-2);no>=0;no--){
-            var destination_no = no+1;
-            if(tmpToBox.options[no].selected && !tmpToBox.options[destination_no].selected){
+    } else if (move == "down") {
+        for (var no = (tmpToBox.options.length - 2); no >= 0; no--) {
+            var destination_no = no + 1;
+            if (tmpToBox.options[no].selected && !tmpToBox.options[destination_no].selected) {
                 tmpToBox.options[no].selected = false;
                 // save upper entry
                 tmp_move = tmpToBox.options[destination_no];
                 // move selected entry one up and select it again
-                tmpToBox.options[destination_no] = new Option(tmpToBox.options[no].text,tmpToBox.options[no].value);
+                tmpToBox.options[destination_no] = new Option(tmpToBox.options[no].text, tmpToBox.options[no].value);
                 tmpToBox.options[destination_no].selected = true;
                 // move upper entry one down
-                tmpToBox.options[no] = new Option(tmp_move.text,tmp_move.value);
-            }           
+                tmpToBox.options[no] = new Option(tmp_move.text, tmp_move.value);
+            }
         }
-    }else if(move == "top"){
+    } else if (move == "top") {
         var tmpBoxArray = new Array();
         var select_count = 0;
         // First take all selected elements and create new option set
-        for(var no=0;no<tmpToBox.options.length;no++){
-            if(tmpToBox.options[no].selected){
+        for (var no = 0; no < tmpToBox.options.length; no++) {
+            if (tmpToBox.options[no].selected) {
                 select_count++;
                 tmpBoxArray.push(tmpToBox.options[no].text + '!!!' + tmpToBox.options[no].value);
                 // remove element from box
                 tmpToBox.remove(no);
                 // because the element is removed, we need to set the index number 1 down for next 
-                no = no -1;
+                no = no - 1;
             }
         }
         // Add all remaining (not selected) entries to option set
-        for(var no=0;no<tmpToBox.options.length;no++){
+        for (var no = 0; no < tmpToBox.options.length; no++) {
             tmpBoxArray.push(tmpToBox.options[no].text + '!!!' + tmpToBox.options[no].value);
         }
 
         // Clean ToBox and takeover of new option set
-        tmpToBox.options.length=0; 
-        for(var no=0;no<tmpBoxArray.length;no++){
+        tmpToBox.options.length = 0;
+        for (var no = 0; no < tmpBoxArray.length; no++) {
             var items = tmpBoxArray[no].split('!!!');
-            tmpToBox.options[no] = new Option(items[0],items[1]);
+            tmpToBox.options[no] = new Option(items[0], items[1]);
             // select the elements
-            if (no < select_count){
+            if (no < select_count) {
                 tmpToBox[no].selected = true;
             }
-        }       
-    }else if(move == "bottom"){
+        }
+    } else if (move == "bottom") {
         var tmpBoxArray = new Array();
         var select_count = 0;
         // First take all selected elements and create new option set
-        for(var no=0;no<tmpToBox.options.length;no++){
+        for (var no = 0; no < tmpToBox.options.length; no++) {
             // NOT selected first: !
-            if(!tmpToBox.options[no].selected){
+            if (!tmpToBox.options[no].selected) {
                 select_count++;
                 tmpBoxArray.push(tmpToBox.options[no].text + '!!!' + tmpToBox.options[no].value);
                 tmpToBox.remove(no);
-                no = no -1;
+                no = no - 1;
             }
         }
         // Add all remaining (not selected) entries to option set
-        for(var no=0;no<tmpToBox.options.length;no++){
+        for (var no = 0; no < tmpToBox.options.length; no++) {
             tmpBoxArray.push(tmpToBox.options[no].text + '!!!' + tmpToBox.options[no].value);
         }
 
         // Clean ToBox and takeover of new option set
-        tmpToBox.options.length=0; 
-        for(var no=0;no<tmpBoxArray.length;no++){
+        tmpToBox.options.length = 0;
+        for (var no = 0; no < tmpBoxArray.length; no++) {
             var items = tmpBoxArray[no].split('!!!');
-            tmpToBox.options[no] = new Option(items[0],items[1]);
+            tmpToBox.options[no] = new Option(items[0], items[1]);
             // select the elements higher than amount of not selected entries
-            if (no >= select_count){
+            if (no >= select_count) {
                 tmpToBox[no].selected = true;
             }
-        }       
+        }
 
     }
 }
 
-function moveElementsLeftRight(BoxIndex,move_direction,cust_order,element)
-{
+function moveElementsLeftRight(BoxIndex, move_direction, cust_order, element) {
     var tmpFromBox;
     var tmpToBox;
     var move_all = new Boolean(false);
     // handle moving "all" elements
-    if ( move_direction.match("_all") ){
+    if (move_direction.match("_all")) {
         move_direction = move_direction.replace("_all", "");
         move_all = true;
     }
-    if(BoxIndex !== false){
+    if (BoxIndex !== false) {
         // button movements
-        if (move_direction == 'right'){
-            tmpFromBox  = fromBoxArray[BoxIndex];
-            tmpToBox    = toBoxArray[BoxIndex];
-        }else if(move_direction == 'left'){
-            tmpFromBox  = toBoxArray[BoxIndex];
-            tmpToBox    = fromBoxArray[BoxIndex];
+        if (move_direction == 'right') {
+            tmpFromBox = fromBoxArray[BoxIndex];
+            tmpToBox = toBoxArray[BoxIndex];
+        } else if (move_direction == 'left') {
+            tmpFromBox = toBoxArray[BoxIndex];
+            tmpToBox = fromBoxArray[BoxIndex];
         }
-    }else if (element.tagName.toLowerCase()=='select'){
+    } else if (element.tagName.toLowerCase() == 'select') {
         // doubleclicks on select
         tmpFromBox = element;
-        var BoxIndex = element.parentNode.parentNode.id.replace(/[^\d]/g,'');
-        if(tmpFromBox==fromBoxArray[BoxIndex]){
+        var BoxIndex = element.parentNode.parentNode.id.replace(/[^\d]/g, '');
+        if (tmpFromBox == fromBoxArray[BoxIndex]) {
             tmpToBox = toBoxArray[BoxIndex];
-        }else{
+        } else {
             tmpToBox = fromBoxArray[BoxIndex];
         }
     }
-    
+
     // new jQuery functionality for movement
-    if(move_all === true){
+    if (move_all === true) {
         $('#' + tmpFromBox.id + ' option').remove().appendTo('#' + tmpToBox.id);
-    }else{
+    } else {
         $('#' + tmpFromBox.id + ' option:selected').remove().appendTo('#' + tmpToBox.id);
     }
 
@@ -243,13 +241,13 @@ function moveElementsLeftRight(BoxIndex,move_direction,cust_order,element)
     livesearch_update(BoxIndex);
 
     // Sort the entries in the destination box (only left one) when moving an item to left one
-    if ( (cust_order == 0) || (cust_order == 1 && (move_direction == "left") ) ){
+    if ((cust_order == 0) || (cust_order == 1 && (move_direction == "left"))) {
         // new ordering function
         $('#' + tmpToBox.id + ' option').sort(sortAlpha).appendTo('#' + tmpToBox.id);
     }
-    
+
     // remove classes on left move
-    if ( move_direction == "left" ){
+    if (move_direction == "left") {
         $('#' + tmpToBox.id + ' option').removeClass();
     }
 
@@ -259,17 +257,16 @@ function moveElementsLeftRight(BoxIndex,move_direction,cust_order,element)
 // new Ordering function
 // found @ http://www.wrichards.com/blog/2009/02/jquery-sorting-elements/
 // including also the case insensitive ordering from the comment (.toLowerCase)
-function sortAlpha(a,b){  
+function sortAlpha(a, b) {
     return a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase() ? 1 : -1;
-};  
+};
 
 
 // update the livesearch values regarding the "tobox" and selectboxindex
-function livesearch_update(selectBoxIndex)
-{
+function livesearch_update(selectBoxIndex) {
     var ToBox = toBoxArray[selectBoxIndex];
     var tmp_livesearchBASE_object = new cloneObject(livesearchBASE_object[selectBoxIndex]);
-    for(var i=0;i<ToBox.options.length;i++){
+    for (var i = 0; i < ToBox.options.length; i++) {
         delete tmp_livesearchBASE_object[ToBox.options[i].text];
     }
     delete livesearchfromBox_object[selectBoxIndex];
@@ -289,8 +286,7 @@ function cloneObject(what) {
 
 
 // escape livesearch string for regex
-function livesearch_encode(string)
-{
+function livesearch_encode(string) {
     string = string.replace(/(\/|\.|\+|\?|\^|\$|\||\\|\(|\)|\[|\]|\{|\})/g, "\\$1");
     string = string.replace(/\*/g, ".*");
     return string;
@@ -300,31 +296,30 @@ function livesearch_encode(string)
 // this section handles the livesearch input and limits the frombox
 // fromBox: name of select field to manipulate
 // element: the livesearch input element
-function livesearch(fromBox, element)
-{
+function livesearch(fromBox, element) {
     var boxRef = document.getElementById(fromBox);
-    var selectBoxIndex = element.id.replace(/[^\d]/g,'');
+    var selectBoxIndex = element.id.replace(/[^\d]/g, '');
     // value in livesearch field
     var query = element.value;
-    if ( query != ""){
+    if (query != "") {
         query = livesearch_encode(query);
     }
 
     var tmpTextArray2 = new Array();
     tmpTextArray2 = livesearchfromBox_object[selectBoxIndex];
-    boxRef.options.length=0;
+    boxRef.options.length = 0;
 
     var i = 0;
-    for (var key in tmpTextArray2){
+    for (var key in tmpTextArray2) {
         var items = tmpTextArray2[key].split('!!!');
         var myregexp = new RegExp("^" + query, "i")
         var Pos = items[0].match(myregexp);
-        if (Pos){
-            boxRef.options[i] = new Option(items[0],items[1]);         
+        if (Pos) {
+            boxRef.options[i] = new Option(items[0], items[1]);
             i++;
         }
-    }       
-    
+    }
+
 }
 
 
@@ -334,24 +329,22 @@ function livesearch(fromBox, element)
     It is needed if the values should be remembered after submit.
     Call this function onsubmit for your form
 */
-function multipleSelectOnSubmit()
-{
-    for(var no=0;no<arrayOfItemsToSelect.length;no++){
+function multipleSelectOnSubmit() {
+    for (var no = 0; no < arrayOfItemsToSelect.length; no++) {
         var obj = arrayOfItemsToSelect[no];
-        if (obj.length == 0){
-            obj.options[0] = new Option("","");
+        if (obj.length == 0) {
+            obj.options[0] = new Option("", "");
         }
-        for(var no2=0;no2<obj.options.length;no2++){
+        for (var no2 = 0; no2 < obj.options.length; no2++) {
             obj.options[no2].selected = true;
         }
     }
-    
+
 }
 
-function createMovableOptions(fromBox,toBox,totalWidth,totalHeight,labelLeft,labelRight,feature,cust_order,replace_mode)
-{
+function createMovableOptions(fromBox, toBox, totalWidth, totalHeight, labelLeft, labelRight, feature, cust_order, replace_mode) {
     // set assign_cust_order(global), 0 if not given
-    cust_order   = (cust_order == null) ? 0 : cust_order;
+    cust_order = (cust_order == null) ? 0 : cust_order;
     replace_mode = (replace_mode == null) ? 0 : replace_mode;
     var livesearch_input_height = 19;
     fromObj = document.getElementById(fromBox);
@@ -359,75 +352,75 @@ function createMovableOptions(fromBox,toBox,totalWidth,totalHeight,labelLeft,lab
     livesearchBASE_object[selectBoxIndex] = new Object();
     livesearchfromBox_object[selectBoxIndex] = new Object();
 
-    if (feature == "livesearch"){
+    if (feature == "livesearch") {
         // creates the livesearch BASE values
         var tmpTextArray2 = new Array();
-        for(var no=0;no<fromObj.options.length;no++){
+        for (var no = 0; no < fromObj.options.length; no++) {
             livesearchBASE_object[selectBoxIndex][fromObj.options[no].text] = (fromObj.options[no].text + '!!!' + fromObj.options[no].value);
         }
         // when there are modifies or pre defined values, they are already in the toBox, we must add theme also into the BASE
-        for(var no=0;no<toObj.options.length;no++){
+        for (var no = 0; no < toObj.options.length; no++) {
             livesearchBASE_object[selectBoxIndex][toObj.options[no].text] = (toObj.options[no].text + '!!!' + toObj.options[no].value);
         }
     }
-    
+
     livesearchfromBox_object[selectBoxIndex] = livesearchBASE_object[selectBoxIndex];
-    
+
     arrayOfItemsToSelect[arrayOfItemsToSelect.length] = toObj;
 
     // add doubleclick function
-    fromObj.ondblclick = function () { moveElementsLeftRight(false,"right",cust_order,this) };
-    toObj.ondblclick   = function () { moveElementsLeftRight(false,"left",cust_order,this) };
-    
+    fromObj.ondblclick = function () { moveElementsLeftRight(false, "right", cust_order, this) };
+    toObj.ondblclick = function () { moveElementsLeftRight(false, "left", cust_order, this) };
+
     fromBoxArray.push(fromObj);
     toBoxArray.push(toObj);
     var parentEl = fromObj.parentNode;
-    
+
     var parentDiv = document.createElement('DIV');
-    parentDiv.className='multipleSelectBoxControl ui-nconf-content ui-widget-content ui-corner-all';
+    parentDiv.className = 'multipleSelectBoxControl ui-nconf-content ui-widget-content ui-corner-all';
     parentDiv.id = 'selectBoxGroup' + selectBoxIndex;
-    if (cust_order == 1){
+    if (cust_order == 1) {
         parentDiv.style.width = (totalWidth + 30) + 'px';
-    }else{
+    } else {
         parentDiv.style.width = totalWidth + 'px';
     }
 
-    if (feature == "livesearch"){
+    if (feature == "livesearch") {
         parentDiv.style.height = (totalHeight + livesearch_input_height) + 'px';
-    }else{
+    } else {
         parentDiv.style.height = totalHeight + 'px';
     }
-    parentEl.insertBefore(parentDiv,fromObj);
-    
-    
+    parentEl.insertBefore(parentDiv, fromObj);
+
+
     var subDiv = document.createElement('DIV');
     //subDiv.style.width = (Math.floor(totalWidth/2) - 15) + 'px';
     subDiv.style.width = "44%";
     //fromObj.style.width = (Math.floor(totalWidth/2) - 17) + 'px';
     fromObj.style.width = "100%";
-    var livesearch_input_width = (Math.floor(totalWidth/2) - 17);
+    var livesearch_input_width = (Math.floor(totalWidth / 2) - 17);
 
     var label = document.createElement('SPAN');
     label.innerHTML = labelLeft;
 
     // add livesearch field
-    if (feature == "livesearch"){
+    if (feature == "livesearch") {
         label.innerHTML = label.innerHTML + '<input id="livesearch_input_' + selectBoxIndex + '" class="livesearch_input" type="text" onkeyup="livesearch(\'' + fromObj.id + '\', this)">';
     }
     subDiv.appendChild(label);
-    
+
     subDiv.appendChild(fromObj);
     subDiv.className = 'multipleSelectBoxDiv';
     parentDiv.appendChild(subDiv);
-    
-    
+
+
     var buttonDiv = document.createElement('DIV');
     buttonDiv.style.verticalAlign = 'middle';
     // move buttons margintop for layout
-    if (feature == "livesearch"){
-        buttonDiv.style.paddingTop = (totalHeight/2) - 32 + 'px';
-    }else{
-        buttonDiv.style.paddingTop = (totalHeight/2) - 40 + 'px';
+    if (feature == "livesearch") {
+        buttonDiv.style.paddingTop = (totalHeight / 2) - 32 + 'px';
+    } else {
+        buttonDiv.style.paddingTop = (totalHeight / 2) - 40 + 'px';
     }
     buttonDiv.style.width = '30px';
     buttonDiv.style.textAlign = 'center';
@@ -438,7 +431,7 @@ function createMovableOptions(fromBox,toBox,totalWidth,totalHeight,labelLeft,lab
     code.id = "moveable_horizontal";
     code.className = "icon_buttons";
 
-    code.innerHTML  = '<img class="pointer lighten" src="img/icon_right.gif" \
+    code.innerHTML = '<img class="pointer lighten" src="img/icon_right.gif" \
                         onclick="moveElementsLeftRight(\'' + selectBoxIndex + '\', \'right\', ' + cust_order + ')">';
     //                            onmouseover="this.src=\'img/icon_right_over.gif\'" \
     //                            onmouseout="this.src = \'img/icon_right.gif\'"> \
@@ -459,7 +452,7 @@ function createMovableOptions(fromBox,toBox,totalWidth,totalHeight,labelLeft,lab
     //                        onmouseover="this.src=\'img/icon_left2_over.gif\'" \
     //                        onmouseout="this.src = \'img/icon_left2.gif\'"> \
     buttonDiv.appendChild(code);
-    
+
     var subDiv = document.createElement('DIV');
     //subDiv.style.width = (Math.floor(totalWidth/2) - 15) + 'px';
     subDiv.style.width = "44%";
@@ -471,32 +464,32 @@ function createMovableOptions(fromBox,toBox,totalWidth,totalHeight,labelLeft,lab
     subDiv.appendChild(toObj);
 
     // show add / replace mode
-    if (replace_mode){
+    if (replace_mode) {
         var replaceDiv = document.createElement('DIV');
         replaceDiv.className = "replaceDiv";
         // define which element is checked
-        if (replace_mode === 1){
-        	var replacemode_checked_replace = 'checked="checked"';
-        	var replacemode_checked_add		= '';
-        }else if (replace_mode === 2){
-        	var replacemode_checked_replace = '';
-        	var replacemode_checked_add		= 'checked="checked"';
+        if (replace_mode === 1) {
+            var replacemode_checked_replace = 'checked="checked"';
+            var replacemode_checked_add = '';
+        } else if (replace_mode === 2) {
+            var replacemode_checked_replace = '';
+            var replacemode_checked_add = 'checked="checked"';
         }
         replaceDiv.innerHTML += '<input type="radio" name="replace_mode" id="replace_mode_replace" value="replace" ' + replacemode_checked_replace + '>';
         replaceDiv.innerHTML += '<label for="replace_mode_replace">overwrite existing</label>';
         replaceDiv.innerHTML += '<input type="radio" name="replace_mode" id="replace_mode_add" value="add" ' + replacemode_checked_add + '>';
         replaceDiv.innerHTML += '<label for="replace_mode_add">add additional</label>';
-        subDiv.appendChild( replaceDiv);
-        
+        subDiv.appendChild(replaceDiv);
+
     }
 
-    parentDiv.appendChild(subDiv);      
-    
+    parentDiv.appendChild(subDiv);
+
     toObj.style.height = (totalHeight - label.offsetHeight) + 'px';
     fromObj.style.height = (totalHeight - label.offsetHeight) + 'px';
 
     //special setup for feature livesearch
-    if (feature == "livesearch"){
+    if (feature == "livesearch") {
         var livesearch_input = document.getElementById('livesearch_input_' + selectBoxIndex);
         // margin bottom defined in CSS
         var livesearch_input_marginBottom = 4;
@@ -508,14 +501,14 @@ function createMovableOptions(fromBox,toBox,totalWidth,totalHeight,labelLeft,lab
 
     // CUST ORDER
     // possibility to move elements up and down
-    if (cust_order){
+    if (cust_order) {
         var buttonDiv = document.createElement('DIV');
         buttonDiv.style.verticalAlign = 'middle';
         // move buttons margintop for layout
-        if (feature == "livesearch"){
-            buttonDiv.style.paddingTop = (totalHeight/2) - 27 + 'px';
-        }else{
-            buttonDiv.style.paddingTop = (totalHeight/2) - 40 + 'px';
+        if (feature == "livesearch") {
+            buttonDiv.style.paddingTop = (totalHeight / 2) - 27 + 'px';
+        } else {
+            buttonDiv.style.paddingTop = (totalHeight / 2) - 40 + 'px';
         }
         buttonDiv.style.width = '30px';
         buttonDiv.style.textAlign = 'center';
@@ -525,7 +518,7 @@ function createMovableOptions(fromBox,toBox,totalWidth,totalHeight,labelLeft,lab
         code.id = "moveable_vertical";
         code.className = "buttons";
 
-        code.innerHTML  = '<img class="pointer lighten" src="img/icon_top_24.gif" \
+        code.innerHTML = '<img class="pointer lighten" src="img/icon_top_24.gif" \
                         onclick="moveElementsUpDown(\'' + selectBoxIndex + '\', \'top\')">';
         //                onmouseover="this.src=\'img/icon_top_24_over.gif\'" \
         //                onmouseout="this.src = \'img/icon_top_24.gif\'" \
@@ -551,7 +544,7 @@ function createMovableOptions(fromBox,toBox,totalWidth,totalHeight,labelLeft,lab
 
     livesearch_update(selectBoxIndex);
     selectBoxIndex++;
-    
+
 }
 
 
@@ -560,29 +553,29 @@ function createMovableOptions(fromBox,toBox,totalWidth,totalHeight,labelLeft,lab
 
 /* Cookie functions from http://www.quirksmode.org/js/cookies.html  */
 
-function createCookie(name,value,days) {
+function createCookie(name, value, days) {
     if (days) {
         var date = new Date();
-        date.setTime(date.getTime()+(days*24*60*60*1000));
-        var expires = "; expires="+date.toGMTString();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        var expires = "; expires=" + date.toGMTString();
     }
     else var expires = "";
-    document.cookie = name+"="+value+expires+"; path=/";
+    document.cookie = name + "=" + value + expires + "; path=/";
 }
 
 function readCookie(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
+    for (var i = 0; i < ca.length; i++) {
         var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
     }
     return null;
 }
 
 function eraseCookie(name) {
-    createCookie(name,"",-1);
+    createCookie(name, "", -1);
 }
 
 
@@ -594,16 +587,35 @@ function eraseCookie(name) {
  * Mirrors the same "measure and sync" approach already used for the
  * livesearch box in the assign_many widget (createMovableOptions above).
  */
-function NConf_alignSearchFilterWidth(){
+function NConf_alignSearchFilterWidth() {
     var $results = $('#overview_results_table');
     var $searchInput = $('#searchfilter_input');
-    if (!$results.length || !$searchInput.length){
+    if (!$results.length || !$searchInput.length) {
         return;
     }
 
     var totalWidth = $results.outerWidth();
-    if (!totalWidth){
+    if (!totalWidth) {
         return;
+    }
+
+    // The "advanced actions" icon bar (multimodify/multidelete) is
+    // absolutely positioned at the right edge of the page, independent of
+    // the search table's own width - so on a wide results table, search
+    // fields sized purely off the table width could grow wide enough to
+    // run into it. Cap the available width at the icon bar's actual left
+    // edge (if present on this page) so the search row never reaches it.
+    var $searchTable = $('#overview_search_table');
+    var $iconBar = $('#ui-nconf-icon-bar');
+    if ($searchTable.length && $iconBar.length && $iconBar.is(':visible')) {
+        var searchTableLeft = $searchTable.offset().left;
+        var iconBarLeft = $iconBar.offset().left;
+        var SAFETY_MARGIN = 20;
+        var buttonsWidth = $('#buttons').outerWidth() || 0;
+        var availableWidth = iconBarLeft - searchTableLeft - buttonsWidth - SAFETY_MARGIN;
+        if (availableWidth > 0 && availableWidth < totalWidth) {
+            totalWidth = availableWidth;
+        }
     }
 
     // keep it usable at either extreme - a two-column escalation list
@@ -613,14 +625,14 @@ function NConf_alignSearchFilterWidth(){
     var MAX_WIDTH = 500;
 
     var $osSelect = $('#searchfilter_os_select');
-    if ($osSelect.length){
+    if ($osSelect.length) {
         // split the available width between the two fields, same rough
         // proportion the old fixed 150px/200px values had
         var inputWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, Math.round(totalWidth * 0.43)));
         var selectWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, Math.round(totalWidth * 0.55)));
         $searchInput.css('width', inputWidth + 'px');
         $osSelect.css('width', selectWidth + 'px');
-    }else{
+    } else {
         var width = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, totalWidth - 20));
         $searchInput.css('width', width + 'px');
     }
