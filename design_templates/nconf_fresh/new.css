@@ -464,20 +464,54 @@ textarea[disabled] {
 form[name="handle_item"] input[type="text"],
 form[name="handle_item"] input[type="password"],
 form[name="handle_item"] select:not([multiple]) {
-  box-sizing: border-box;
-  width: 330px;
-  max-width: 330px;
+  box-sizing: border-box !important;
+  width: 330px !important;
+  min-width: 330px !important;
+  max-width: 330px !important;
 }
 
 form[name="handle_item"] select:not([multiple]) {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 /* command-parameter argument fields (ARG1, ARG2, ...) stay compact instead of
    inheriting the wide default above - they sit several to a row */
 form[name="handle_item"] .ui-nconf-max-width input[type="text"] {
-  width: 150px;
-  max-width: 150px;
+  width: 150px !important;
+  max-width: 150px !important;
+}
+
+/* The plugin in nconf_searchable_select.js replaces every closed <select>
+   with a custom "type-to-filter" widget (.nsel-wrap / .nsel-control) and
+   hides the real <select> - so the rules above, which target select
+   elements directly, never reach the thing that's actually visible. The
+   widget also measures the (now-hidden) select's own width and copies it
+   onto the visible control as an inline min-width, but never sets a
+   max-width, so long option text still stretches it open exactly like the
+   native select did. */
+form[name="handle_item"] .nsel-wrap {
+  max-width: 330px !important;
+}
+
+form[name="handle_item"] .nsel-control {
+  width: 330px !important;
+  min-width: 330px !important;
+  max-width: 330px !important;
+  box-sizing: border-box !important;
+}
+
+/* The open dropdown panel must still show the full option text (only the
+   closed control truncates) - let long options wrap onto multiple lines
+   instead of being cut off with an ellipsis, and give the panel more room
+   to work with than the closed control's 330px. */
+form[name="handle_item"] .nsel-panel {
+  max-width: 600px !important;
+}
+
+form[name="handle_item"] .nsel-opt {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
 }
