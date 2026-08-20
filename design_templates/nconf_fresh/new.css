@@ -461,13 +461,24 @@ textarea[disabled] {
    field the same size; the full text is still shown when a dropdown is
    actually open (browsers size the open dropdown popup independently of the
    closed control's width/overflow). */
-form[name="handle_item"] input[type="text"],
+/* the assign_many dual-listbox widget's own "type to filter" search field
+   (createMovableOptions in nconf.js) already has its own working width via
+   main.css's .livesearch_input rule - excluded here so our !important
+   doesn't override it. Instead, pin it to exactly 100% of its container
+   with the same box-sizing as the list box below it (which is also set to
+   100% via JS), so both compute to the exact same pixel width. */
+form[name="handle_item"] input[type="text"]:not(.livesearch_input),
 form[name="handle_item"] input[type="password"],
 form[name="handle_item"] select:not([multiple]) {
   box-sizing: border-box !important;
   width: 330px !important;
   min-width: 330px !important;
   max-width: 330px !important;
+}
+
+form[name="handle_item"] input.livesearch_input {
+  box-sizing: border-box !important;
+  width: 100% !important;
 }
 
 form[name="handle_item"] select:not([multiple]) {
