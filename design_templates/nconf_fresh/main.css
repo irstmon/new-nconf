@@ -1,10 +1,12 @@
 /* list color */
-.color_list1, .odd {
+.color_list1,
+.odd {
   background-color: #F9F9F9;
 }
 
 /* darker one */
-.color_list2, .even {
+.color_list2,
+.even {
   background-color: #EEEEEE;
 }
 
@@ -45,7 +47,8 @@
   color: red;
 }
 
-.attention, .red {
+.attention,
+.red {
   color: red;
 }
 
@@ -123,7 +126,10 @@
 }
 
 /* additional migration from other css */
-input[type=text], input[type=password], select, textarea {
+input[type=text],
+input[type=password],
+select,
+textarea {
   width: 250px;
 }
 
@@ -241,7 +247,8 @@ input[type=text], input[type=password], select, textarea {
   background-color: #F3F3F3;
 }
 
-.feedback div, .feedback b {
+.feedback div,
+.feedback b {
   margin-left: 10px;
 }
 

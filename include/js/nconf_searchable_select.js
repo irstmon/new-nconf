@@ -19,23 +19,23 @@
     'use strict';
 
     var ENHANCED_ATTR = 'data-nsel';
-    var MIN_OPTIONS   = 0; /* 0 = enhance every single select */
+    var MIN_OPTIONS = 0; /* 0 = enhance every single select */
 
     function injectStyles() {
         if (document.getElementById('nsel-styles')) { return; }
         var css = ''
             + '.nsel-wrap{position:relative;display:inline-block;vertical-align:middle;font:inherit;}'
             + '.nsel-control{box-sizing:border-box;min-width:120px;max-width:100%;padding:2px 22px 2px 6px;'
-            +   'border:1px solid #7f9db9;background:#fff;color:#000;cursor:pointer;position:relative;'
-            +   'min-height:20px;line-height:18px;font:inherit;white-space:nowrap;overflow:hidden;'
-            +   'text-overflow:ellipsis;border-radius:2px;}'
+            + 'border:1px solid #7f9db9;background:#fff;color:#000;cursor:pointer;position:relative;'
+            + 'min-height:20px;line-height:18px;font:inherit;white-space:nowrap;overflow:hidden;'
+            + 'text-overflow:ellipsis;border-radius:2px;}'
             + '.nsel-control:focus{outline:1px solid #3b7bbf;}'
             + '.nsel-arrow{position:absolute;right:6px;top:6px;font-size:10px;color:#666;pointer-events:none;}'
             + '.nsel-disabled .nsel-control{background:#ececec;color:#666;cursor:default;}'
             + '.nsel-panel{position:absolute;z-index:99999;left:0;top:100%;margin-top:1px;background:#fff;'
-            +   'border:1px solid #7f9db9;box-shadow:0 2px 6px rgba(0,0,0,0.25);min-width:120px;max-width:480px;}'
+            + 'border:1px solid #7f9db9;box-shadow:0 2px 6px rgba(0,0,0,0.25);min-width:120px;max-width:480px;}'
             + '.nsel-search{box-sizing:border-box;width:100%;padding:4px 6px;border:0;border-bottom:1px solid #ccc;'
-            +   'font:inherit;outline:none;}'
+            + 'font:inherit;outline:none;}'
             + '.nsel-list{list-style:none;margin:0;padding:0;max-height:240px;overflow-y:auto;}'
             + '.nsel-opt{padding:3px 8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#000;}'
             + '.nsel-opt:hover,.nsel-opt.nsel-hl{background:#3b7bbf;color:#fff;}'
@@ -59,7 +59,7 @@
     function scrollIntoViewSafe(el) {
         if (!el || !el.scrollIntoView) { return; }
         try { el.scrollIntoView({ block: 'nearest' }); }
-        catch (e) { try { el.scrollIntoView(false); } catch (e2) {} }
+        catch (e) { try { el.scrollIntoView(false); } catch (e2) { } }
     }
 
     function fireChange(select) {
