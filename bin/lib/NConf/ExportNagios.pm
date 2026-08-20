@@ -1062,7 +1062,7 @@ $fattr,$fval
                     if(defined($attr->[0]) && $attr->[1] eq "" && $class ne "hostgroup" && $class ne "servicegroup"){
 
                         # remove the whole item from the configuration, unless it's an advanced-service (special rule applies there)
-                        unless($class eq "advanced-service" && ($attr->[0] eq "host_name" || $attr->[0] eq "hostgroup_name" || $attr->[0] eq "servicegroups")){
+                        unless($class eq "advanced-service" && ($attr->[0] eq "host_name" || $attr->[0] eq "hostgroup_name" || $attr->[0] eq "servicegroups" || $attr->[0] eq "host_exclude" || $attr->[0] eq "hostgroup_exclude")){
                             &logger(4,"Removing $class '$id_item->[0]' from config because the attribute '$attr->[0]' was empty");
                             $has_empty_linking_attrs = 1;
                         }
@@ -1216,6 +1216,47 @@ $fattr,$fval
             my @item_attrs = &getItemData($id_item->[0]);
             foreach my $attr (@item_attrs){
                 if($attr->[0] ne "" && $attr->[1] ne "" && $attr->[2] ne "no"){ $fattr=$attr->[0];$fval=$attr->[1];write FILE}
+            }
+
+            ##### process advanced-service host/hostgroup excludes: fold host_exclude and
+            ##### hostgroup_exclude values into host_name/hostgroup_name as Nagios-native
+            ##### "!hostname" exclusions (host_exclude/hostgroup_exclude themselves are never
+            ##### written to the config directly - see write_to_conf='no' on these attributes)
+            if($class eq "advanced-service"){
+                my ($h_obj, $he_obj, $hg_obj, $hge_obj);
+                foreach my $attr (@item_links){
+                    if ($attr->[0] eq "host_name") {
+                        $h_obj = $attr;
+                    } elsif ($attr->[0] eq "host_exclude") {
+                        $he_obj = $attr;
+                    } elsif ($attr->[0] eq "hostgroup_name") {
+                        $hg_obj = $attr;
+                    } elsif ($attr->[0] eq "hostgroup_exclude") {
+                        $hge_obj = $attr;
+                    }
+                }
+                if ($he_obj && defined($he_obj->[1]) && $he_obj->[1] ne ""){
+                    my @hostex = split(/,/, $he_obj->[1]);
+                    s/^/!/ for @hostex;
+                    if ($h_obj){
+                        $h_obj->[1] = join(',', $h_obj->[1], @hostex);
+                    } else {
+                        $he_obj->[0] = "host_name";
+                        $he_obj->[2] = "yes";
+                        $he_obj->[1] = join(',', @hostex);
+                    }
+                }
+                if ($hge_obj && defined($hge_obj->[1]) && $hge_obj->[1] ne ""){
+                    my @hostgroupex = split(/,/, $hge_obj->[1]);
+                    s/^/!/ for @hostgroupex;
+                    if ($hg_obj){
+                        $hg_obj->[1] = join(',', $hg_obj->[1], @hostgroupex);
+                    } else {
+                        $hge_obj->[0] = "hostgroup_name";
+                        $hge_obj->[2] = "yes";
+                        $hge_obj->[1] = join(',', @hostgroupex);
+                    }
+                }
             }
 
             ##### (1D) write linked items (processed above) to config
