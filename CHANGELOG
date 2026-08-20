@@ -1,3 +1,41 @@
+Working Release 2.1.0 (2026-08-20)
+
+ADDED   'service-escalation', 'adv-service-escalation', 'host-escalation' and 'eventhandler' classes
+        including their attributes (commonly hand-added by NConf users, now part of the stock install)
+ADDED   'clone' functionality for the four escalation/eventhandler classes (pick a source item + new
+        name, copies all attributes and links, same pattern as the existing host-clone feature)
+ADDED   navigation and overview icons for the four escalation/eventhandler classes
+ADDED   host/service cross-filtering on the 'adv-service-escalation' edit form: selecting one or more
+        Advanced Services narrows the host selection down to only the hosts that actually have all of
+        the selected services (directly linked or inherited over a hostgroup), instead of only failing
+        later at config-check time
+ADDED   'UPDATE/1.3.1_to_2.0.0' bridging folder; the fork's version number had jumped from 1.3.1
+        straight to 2.0.0 without ever shipping this folder, silently breaking the update chain for
+        any installation below 2.0.0
+
+FIXED   MySQL 8 compatibility: 'grouping' is a reserved word since MySQL 8.0 and was used unquoted in
+        several queries, causing an empty sidebar navigation with no visible error
+FIXED   'service-escalation' Nagios config export: a single entry can select services from multiple
+        different hosts, so the export now groups the selected services by their actual host and
+        writes one serviceescalation block per host, instead of a single ambiguous block; an entry
+        with no valid service selected is now skipped cleanly
+FIXED   'adv-service-escalation' Nagios config export: internal NConf service reference is now
+        resolved to the actual generated service_description, fixing a name mismatch that caused a
+        Nagios config-check error
+FIXED   'overview': [actions] column header colspan did not account for classes with a 3rd (clone)
+        icon, causing the column header and the select-checkbox column to no longer line up
+FIXED   'overview': search-filter fields could grow wide enough on a wide results table to overlap
+        the 'advanced actions' icon bar
+
+CHANGED 'service-escalation' no longer has its own 'host_name' field (a single entry can cover
+        services on several hosts); existing installations that already had one get it removed
+        automatically, with remaining attribute ordering adjusted
+CHANGED add/modify forms: all single-line fields (text inputs, native selects, and the custom
+        type-to-filter dropdown widget) now share a consistent width, truncated with an ellipsis
+        instead of a single long value (e.g. a saved action url) stretching the whole table column
+CHANGED 'overview': search-filter fields are now sized proportionally to the actual results table
+        width instead of a fixed size unrelated to the table beneath them
+
 Working Release 2.0.0 (2026-06-03)
 
 ADDED   Compatibility with php8.5 added
