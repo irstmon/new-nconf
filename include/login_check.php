@@ -279,6 +279,7 @@ if (AUTH_TYPE == "file"){
 }elseif (AUTH_TYPE == "ad_ldap") {
     $ldapconnection = ldap_connect(AD_LDAP_SERVER, AD_LDAP_PORT);
     NConf_DEBUG::set(AD_LDAP_SERVER, 'DEBUG', 'AD LDAP SERVER');
+    ldap_set_option($ldapconnection, LDAP_OPT_REFERRALS, 0);
     ldap_set_option($ldapconnection, LDAP_OPT_PROTOCOL_VERSION, 3);
 
     # Try to logon user to ldap
