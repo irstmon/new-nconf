@@ -119,6 +119,7 @@ $NConf_PERMISSIONS = new NConf_PERMISSIONS;
     if ( defined('JQUERY') AND JQUERY == 1 ){
         echo '<!-- Load jQuery -->
             <script src="include/js/jquery.js" type="text/javascript"></script>
+            <script src="include/js/jquery-migrate.js" type="text/javascript"></script>
             <script src="include/js/jquery-ui.custom.min.js" type="text/javascript"></script>
             ';
         echo '<!-- Load jQuery plugins (also nconf-jquery plugins/functions -->
