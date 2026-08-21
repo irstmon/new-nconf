@@ -2,14 +2,14 @@
 // HELP TEXT
 //
 //jQuery.nconf_help_admin = function() {
-jQuery.nconf_help_admin = function(type) {
+jQuery.nconf_help_admin = function (type) {
 
-    $("#help_text > div").each(function(index) {
+    $("#help_text > div").each(function (index) {
         var clicked_id = $(this).attr("id");
 
         // check if item exists, otherwise continue 
         var exists = $("#page_content").length;
-        if (exists == 0){
+        if (exists == 0) {
             return true;
         }
 
@@ -29,14 +29,14 @@ jQuery.nconf_help_admin = function(type) {
         });
 
 
-        if (type == null){
-            var help_parent = $(":input[name='"+$(this).attr("id")+"']").parent().prev();
+        if (type == null) {
+            var help_parent = $(":input[name='" + $(this).attr("id") + "']").parent().prev();
             // div instead of button fixes the button bug when clicked
             help_parent.append("<div></div>");
             var help_button = help_parent.children("div");
-            
-        }else if(type == "direct"){
-            var help_button = $("div[name='"+$(this).attr("id")+"']");
+
+        } else if (type == "direct") {
+            var help_button = $("div[name='" + $(this).attr("id") + "']");
         }
 
 
@@ -48,14 +48,14 @@ jQuery.nconf_help_admin = function(type) {
         }).addClass("fg-button fg-button-icon-only");
 
 
-        help_button.click(function() {
+        help_button.click(function () {
             var previouse_help_id = $(".help_box:visible").attr("id");
-            if ($(".help_box:visible").dialog("isOpen") ){
+            if ($(".help_box:visible").dialog("isOpen")) {
                 $(".help_box:visible").dialog('close');
             }
             // if the same help button was clicked, just close the box
             // if the clicked help is an other, display the new content
-            if (clicked_id != previouse_help_id ){
+            if (clicked_id != previouse_help_id) {
                 help_text.dialog('open');
             }
 

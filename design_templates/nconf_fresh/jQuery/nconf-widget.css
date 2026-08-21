@@ -33,9 +33,11 @@ input.ui-button {
 .ui-dialog {
   padding: 0;
 }
+
 .ui-dialog .ui-dialog-title {
   font-size: 115%;
 }
+
 /* Set the titlebar of boxes smaller than standard */
 .ui-dialog .ui-dialog-titlebar {
   position: relative;
@@ -76,7 +78,8 @@ input.ui-button {
   float: right;
 }
 
-th.ui-state-default, td.ui-state-default {
+th.ui-state-default,
+td.ui-state-default {
   padding-left: 3px;
 }
 
@@ -105,7 +108,8 @@ th.ui-state-default, td.ui-state-default {
 
 /* input fields */
 /* focus used for inputs with jquery ui ui-state-focus, but do not use the background */
-.ui-nconf-input, .no-background {
+.ui-nconf-input,
+.no-background {
   background: transparent none !important;
   font-weight: normal !important;
   background-color: white !important;
@@ -186,7 +190,8 @@ th.ui-state-default, td.ui-state-default {
   border-top: 0 none;
 }
 
-.ui-nconf-table tbody tr, .ui-nconf-table tbody tr a {
+.ui-nconf-table tbody tr,
+.ui-nconf-table tbody tr a {
   color: #585858;
 }
 
@@ -194,7 +199,8 @@ th.ui-state-default, td.ui-state-default {
   border-color: #c0b1b3;
 }
 
-.ui-nconf-table td, .ui-nconf-table th {
+.ui-nconf-table td,
+.ui-nconf-table th {
   padding-left: 3px;
   height: 16px;
 }
@@ -221,29 +227,29 @@ th.ui-state-default, td.ui-state-default {
   list-style: none outside none;
 }
 
-#navigation ul.nav-list > li {
+#navigation ul.nav-list>li {
   padding: 2px 8px;
   height: 18px;
   clear: both;
 }
 
-#navigation ul.nav-list ul.nav-list > li {
+#navigation ul.nav-list ul.nav-list>li {
   padding: 0;
 }
 
-#navigation ul.nav-list > li:hover {
+#navigation ul.nav-list>li:hover {
   background-color: #DBDDE2;
 }
 
-#navigation ul.nav-list > li.active {
+#navigation ul.nav-list>li.active {
   background-color: #8C96A5;
 }
 
-#navigation ul.nav-list > li.active a {
+#navigation ul.nav-list>li.active a {
   color: #FFFFFF;
 }
 
-#navigation ul.nav-list > li > div:first-child {
+#navigation ul.nav-list>li>div:first-child {
   padding-top: 1px;
 }
 
@@ -276,7 +282,7 @@ ICONs ICON BARs etc
 }
 
 /* icon bar in box header, like detail view */
-.ui-widget-header > #ui-nconf-icon-bar {
+.ui-widget-header>#ui-nconf-icon-bar {
   right: 10px;
   top: 3px;
 }
@@ -306,7 +312,7 @@ img.ui-button {
   font-weight: bold;
 }
 
-#ui-nconf-icon-bar fieldset > div {
+#ui-nconf-icon-bar fieldset>div {
   text-align: right;
 }
 
@@ -319,10 +325,13 @@ img.ui-button {
  * possible improvement when hovering a link and lighten its image:
 a.ui-state-hover .lighten
 */
-.lighten:hover, .disabled {
+.lighten:hover,
+.disabled {
   /* IE compatibility */
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; /* first! (IE8) */
-  filter: alpha(opacity = 50); /* second!(IE5-7) */
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  /* first! (IE8) */
+  filter: alpha(opacity=50);
+  /* second!(IE5-7) */
 
   /* Firefox and all other browsers */
   opacity: .5;
@@ -344,4 +353,3 @@ a.ui-state-hover .lighten
 select option.ui-state-error.ui-state-error.highlight {
   border-style: none;
 }
-

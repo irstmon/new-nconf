@@ -1,4 +1,4 @@
-jQuery.fn.dataTableExt.oApi.fnSetFilteringDelay = function ( oSettings, iDelay ) {
+jQuery.fn.dataTableExt.oApi.fnSetFilteringDelay = function (oSettings, iDelay) {
     /*
      * Type:        Plugin for DataTables (www.datatables.net) JQuery plugin.
      * Name:        dataTableExt.oApi.fnSetFilteringDelay
@@ -20,29 +20,29 @@ jQuery.fn.dataTableExt.oApi.fnSetFilteringDelay = function ( oSettings, iDelay )
     var
         _that = this,
         iDelay = (typeof iDelay == 'undefined') ? 250 : iDelay;
-    
-    this.each( function ( i ) {
+
+    this.each(function (i) {
         $.fn.dataTableExt.iApiIndex = i;
         var
-            $this = this, 
-            oTimerId = null, 
+            $this = this,
+            oTimerId = null,
             sPreviousSearch = null,
-            anControl = $( 'input', _that.fnSettings().aanFeatures.f );
-        
-            anControl.unbind( 'keyup' ).bind( 'keyup', function() {
+            anControl = $('input', _that.fnSettings().aanFeatures.f);
+
+        anControl.unbind('keyup').bind('keyup', function () {
             var $$this = $this;
 
             if (sPreviousSearch === null || sPreviousSearch != anControl.val()) {
                 window.clearTimeout(oTimerId);
-                sPreviousSearch = anControl.val();  
-                oTimerId = window.setTimeout(function() {
+                sPreviousSearch = anControl.val();
+                oTimerId = window.setTimeout(function () {
                     $.fn.dataTableExt.iApiIndex = i;
-                    _that.fnFilter( anControl.val() );
+                    _that.fnFilter(anControl.val());
                 }, iDelay);
             }
         });
-        
+
         return this;
-    } );
+    });
     return this;
 }
