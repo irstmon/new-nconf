@@ -75,7 +75,7 @@ $status = flock($generate_lock_handle, LOCK_EX | LOCK_NB); //lock the file
 
 
         // accordion style enhanced to handle all items
-        $(".accordion_title").live("click hover", function(event) {
+        $(".accordion_title").live("hover click", function(event) {
             $(this).nconf_accordion_list(event);
         });
 
@@ -158,4 +158,3 @@ $status = flock($generate_lock_handle, LOCK_EX | LOCK_NB); //lock the file
 require_once 'include/foot.php';
 
 ?>
-

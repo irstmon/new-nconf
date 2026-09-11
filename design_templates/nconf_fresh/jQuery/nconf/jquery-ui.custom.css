@@ -1338,13 +1338,86 @@
 	text-decoration: none !important;
 	cursor: pointer;
 	text-align: center;
+	vertical-align: middle;
+	white-space: nowrap;
 	zoom: 1;
 	overflow: visible;
+	/* keep every button (icon-only or text+icon) the same height,
+	   regardless of type - without this, icon-only buttons (which set
+	   their own explicit height below) end up visibly shorter than
+	   text+icon buttons, which otherwise only get whatever height the
+	   browser's default button rendering happens to produce */
+	height: 2.2em;
+	line-height: 2.2em;
+	box-sizing: border-box;
+}
+
+/* jQuery UI 1.12+'s button widget no longer adds ui-state-default /
+   ui-state-hover / ui-state-active classes on its own - it relies on
+   native :hover/:focus/:active instead - so buttons rendered flat/plain
+   with none of the theme's usual gradient, border or icon tint. Restore
+   that look by applying the same rules directly to .ui-button and its
+   interaction pseudo-classes. */
+.ui-button {
+	border: 1px solid #cccccc;
+	background: #e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
+	font-weight: bold;
+	color: #585858;
+}
+
+.ui-button .ui-icon {
+	background-image: url(images/ui-icons_585858_256x240.png);
+}
+
+.ui-button:hover,
+.ui-button:focus {
+	border: 1px solid #999999;
+	background: #dadada url(images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x;
+	font-weight: bold;
+	color: #000000;
+}
+
+.ui-button:hover .ui-icon,
+.ui-button:focus .ui-icon {
+	background-image: url(images/ui-icons_212121_256x240.png);
+}
+
+.ui-button:active {
+	border: 1px solid #aaaaaa;
+	background: #c2c7d0 url(images/ui-bg_inset-hard_70_c2c7d0_1x100.png) 50% 50% repeat-x;
+	font-weight: bold;
+	color: #212121;
+}
+
+.ui-button:active .ui-icon {
+	background-image: url(images/ui-icons_212121_256x240.png);
 }
 
 /* the overflow property removes extra width in IE */
 .ui-button-icon-only {
 	width: 2.2em;
+	/* jQuery UI 1.12+ no longer wraps the button label in a
+	   .ui-button-text span for icon-only buttons - it's a bare text
+	   node instead, so it can only be hidden by pushing it off-screen,
+	   not by hiding a wrapper element (matches the official 1.12.1
+	   button widget CSS) */
+	box-sizing: border-box;
+	text-indent: -9999px;
+	white-space: nowrap;
+	/* the base .ui-button rule below has padding:0 with height coming
+	   only from an input-specific padding rule - native <button>/<input>
+	   elements get an implicit browser-default height regardless, but
+	   <a>/<div>-based icon-only buttons (e.g. the header's home/back
+	   icons) have no content contributing to their height once the
+	   label is indented away and the icon is absolutely positioned,
+	   so they collapse to 0px and the icon renders shifted upward */
+	height: 2.2em;
+	line-height: 2.2em;
+}
+
+/* no icon support for input elements - keep their label visible */
+input.ui-button.ui-button-icon-only {
+	text-indent: 0;
 }
 
 /* to make room for the icon, a width needs to be set here */
@@ -1395,6 +1468,27 @@ button.ui-button-icons-only {
 /* no icon support for input elements, provide padding by default */
 input.ui-button {
 	padding: .4em 1em;
+}
+
+/* jQuery UI 1.12+ lays out icon+text combo buttons (label + icons,
+   NOT icon-only) via normal inline flow - an icon span, a spacer span,
+   then the label text, all in sequence - rather than absolutely
+   positioning the icon like the old 1.8.10 theme did. The old absolute
+   positioning below still matches the new markup's icon span (since it
+   still carries a plain ".ui-icon" class), causing the icon to overlap
+   the label instead of sitting beside it. Reset it back to normal flow
+   for every case except genuine icon-only buttons. */
+.ui-button-text-icon-primary .ui-button-icon,
+.ui-button-text-icon-secondary .ui-button-icon,
+.ui-button-text-icons .ui-button-icon,
+.ui-button-icons-only .ui-button-icon {
+	display: inline-block !important;
+	position: static !important;
+	top: auto !important;
+	left: auto !important;
+	right: auto !important;
+	margin: 0 !important;
+	vertical-align: middle;
 }
 
 /*button icon element(s) */
